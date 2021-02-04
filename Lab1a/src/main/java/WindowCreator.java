@@ -44,6 +44,10 @@ public class WindowCreator {
 
         thread1 = new ThreadManager(firstPosition, this.slider);
         thread2 = new ThreadManager(secondPosition, this.slider);
+
+        frameMain.invalidate();
+        frameMain.validate();
+        frameMain.repaint();
     }
 
     /**
