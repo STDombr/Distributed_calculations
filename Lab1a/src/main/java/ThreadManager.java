@@ -40,7 +40,7 @@ public class ThreadManager implements Runnable {
     public void setStart() {
         this.mode = true;
         thread = new Thread(this);
-
+        thread.setDaemon(true);
         thread.start();
     }
 
