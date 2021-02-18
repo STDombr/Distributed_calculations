@@ -34,27 +34,26 @@ func findBear(id int, wg *sync.WaitGroup, regions <-chan int, matrix [][]bool) {
 		fmt.Println("Bees group", id, "searching in region", region)
 
 		for i := range matrix[region] {
-			time.Sleep(100 * time.Microsecond)
+			time.Sleep(time.Microsecond)
 
 			if matrix[region][i] {
 				fmt.Println("Bees group", id, "found the bear in region", region)
 
 				//Remove other regions from channel
-				for range regions {
-				}
+				for range regions {}
 
-				fmt.Println("Bees group", id, "returned.")
+				fmt.Println("Bees group", id, "returned from region", region)
 				return
 			}
 		}
 
-		fmt.Println("Bees group", id, "returned.")
+		fmt.Println("Bees group", id, "returned from region", region)
 	}
 }
 
 func main() {
-	n := 10
-	m := 100
+	n := 50
+	m := 1000
 	beesNum := 4
 
 	matrix := createMatrix(n, m)
