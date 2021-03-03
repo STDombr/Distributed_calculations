@@ -6,7 +6,7 @@ import java.util.concurrent.ForkJoinPool;
 public class Main {
     final static int FIRST_MONKS_COUNT = 40;
     final static int SECOND_MONKS_COUNT = 40;
-    final static int NUM_OF_THREADS = 2;
+    final static int NUM_OF_THREADS = 4;
 
     public static void main(String[] args) {
         Monastery firstMonastery = new Monastery("HuanIn");
