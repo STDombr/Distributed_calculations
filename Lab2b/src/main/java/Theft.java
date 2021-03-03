@@ -20,7 +20,7 @@ public class Theft {
                 Weapon w = mainStorage.getWeapon();
 
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -47,7 +47,7 @@ public class Theft {
                 Weapon w;
 
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(1500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
