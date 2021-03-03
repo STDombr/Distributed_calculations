@@ -1,4 +1,4 @@
-Java
+Go
 Lab 2a
 ІПС-31
 Stanislav Dombrovskyi 
