@@ -22,15 +22,14 @@ func getString(element int) string {
 	}
 }
 
-func smoker(table *[]bool, id int, smokerCheckingSemaphore, emptyTableSemaphore, resetSemaphore chan bool, waitGroup *sync.WaitGroup) {
-	defer waitGroup.Done()
+func smoker(table *[]bool, id int, smokersSemaphore, emptyTableSemaphore, resetSemaphore chan bool, wg *sync.WaitGroup) {
+	defer wg.Done()
 	for {
-		<-smokerCheckingSemaphore
+		<-smokersSemaphore
 		fmt.Println("Smoker with", getString(id), "checks the table")
 		if !(*table)[id] {
-			time.Sleep(time.Millisecond*1500)
 			fmt.Println("Smoker with", getString(id), "smoking the cigarette...")
-			time.Sleep(time.Second * 1)
+			time.Sleep(time.Second * 2)
 			for i := range *table {
 				(*table)[i] = false
 			}
@@ -44,21 +43,21 @@ func smoker(table *[]bool, id int, smokerCheckingSemaphore, emptyTableSemaphore,
 			emptyTableSemaphore <- true
 		} else {
 			smokersNum++
-			smokerCheckingSemaphore <- true
+			smokersSemaphore <- true
 			<-resetSemaphore
 		}
 	}
 }
 
-func broker(table *[]bool, smokerCheckingSemaphore chan bool, emptyTableSemaphore chan bool, waitGroup *sync.WaitGroup) {
-	defer waitGroup.Done()
+func broker(table *[]bool, smokersSemaphore chan bool, emptyTableSemaphore chan bool, wg *sync.WaitGroup) {
+	defer wg.Done()
 	for {
 		<-emptyTableSemaphore
 		var firstComponent, secondComponent = generateTwoComponents()
 		(*table)[firstComponent] = true
 		(*table)[secondComponent] = true
 		fmt.Println("Broker put", getString(firstComponent), "and", getString(secondComponent))
-		smokerCheckingSemaphore <- true
+		smokersSemaphore <- true
 	}
 }
 
@@ -76,20 +75,20 @@ func generateTwoComponents() (int, int) {
 }
 
 func main() {
-	var waitGroup sync.WaitGroup
+	var wg sync.WaitGroup
 	var table = make([]bool, 3)
 
-	var smokerCheckingSemaphore = make(chan bool, 1)
+	var smokersSemaphore = make(chan bool, 1)
 	var emptyTableSemaphore = make(chan bool, 1)
 	var resetSemaphore = make(chan bool)
 
 	emptyTableSemaphore <- true
-	waitGroup.Add(1)
-	go broker(&table, smokerCheckingSemaphore, emptyTableSemaphore, &waitGroup)
+	wg.Add(1)
+	go broker(&table, smokersSemaphore, emptyTableSemaphore, &wg)
 
 	for i := 0; i < 3; i++ {
-		waitGroup.Add(1)
-		go smoker(&table, i, smokerCheckingSemaphore, emptyTableSemaphore, resetSemaphore, &waitGroup)
+		wg.Add(1)
+		go smoker(&table, i, smokersSemaphore, emptyTableSemaphore, resetSemaphore, &wg)
 	}
-	waitGroup.Wait()
+	wg.Wait()
 }
